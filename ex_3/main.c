@@ -2,13 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LIGNES 256
-
 int main()
 {
-    char lignes[MAX_LIGNES];
-    char **exemple=NULL;
-    int i=0;
     FILE *fp = fopen("exercice3.txt", "r");
 
     if (fp == NULL)
@@ -16,22 +11,54 @@ int main()
         printf("Le fichier test.txt n'a pas pu être ouvert\n");
         return EXIT_FAILURE;
     }
-    while (fgets(lignes, sizeof(lignes),fp)!=NULL) 
-    {
-        i++;
-        exemple = realloc(exemple, i * sizeof(char*));
-        exemple[i-1] = malloc(strlen(lignes) + 1);
-        strcpy(exemple[i-1], lignes);
+    int i=0;
+    int c;
+    char lignes[256];
+    int ligne = 0;
 
+
+
+    while ((c = getc(fp)) != EOF)
+    {
+        if (c == '\n')
+        {
+            ligne++;
+        }
     }
+    rewind(fp);
+    char **exemple=malloc(ligne *sizeof(char *));
+    printf("%d\n", ligne);
+    // while (fgets(lignes, sizeof(lignes),fp)!=NULL) 
+    // {
+    //     exemple = malloc(ligne * sizeof(char*));
+    //     exemple[i-1] = malloc(strlen(lignes) + 1);
+    //     // char **tmp = realloc(exemple, (i + 1) * sizeof(char *));
+    //     strcpy(exemple[i], lignes);     
+    //     i++;
+    // }
+        char buffer[256];
+        while (fgets(buffer, sizeof(buffer), fp) && i < ligne) 
+        {
+        exemple[i] = malloc(strlen(buffer) + 1);
+            if (!exemple[i]) 
+            {
+                perror("Erreur d'allocation");
+                break;
+            }
+        strcpy(exemple[i], buffer);
+        i++;
+        }
+    printf("%d",i);    
+    int j= i;
+    fclose(fp);
 
-    for (int j =0; j < i; j++) 
+    for (int i=0 ; i < j; i++) 
     {
-        printf("%s", exemple[j]);
-        free(exemple[j]);
+        printf("%s\n", exemple[i]);
+        free(exemple[i]);
     }
 
     free(exemple);
-    fclose(fp);
+  
     return 0;
 }
